@@ -8,6 +8,7 @@ import { Testimonials } from "@/components/landing/Testimonials";
 import { FAQ } from "@/components/landing/FAQ";
 import { Footer } from "@/components/landing/Footer";
 import { Modal } from "@/components/landing/Modal";
+import { ContactButton } from "@/components/landing/ContactButton";
 
 const Index = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -32,6 +33,7 @@ const Index = () => {
       <Footer onCTAClick={handleCTAClick} />
       
       <Modal isOpen={isModalOpen} onClose={handleCloseModal} />
+      <ContactButton />
     </div>
   );
 };

@@ -1,6 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { CheckCircle, Clock, Users } from "lucide-react";
+import module1Image from "@/assets/module1-frontend.jpg";
+import module2Image from "@/assets/module2-react.jpg";
+import module3Image from "@/assets/module3-backend.jpg";
+import module4Image from "@/assets/module4-database.jpg";
+import module5Image from "@/assets/module5-fullstack.jpg";
+import module6Image from "@/assets/module6-devops.jpg";
 
 interface CurriculumProps {
   onCTAClick: () => void;
@@ -12,6 +18,7 @@ export const Curriculum = ({ onCTAClick }: CurriculumProps) => {
       id: "module1",
       title: "Módulo 1: Fundamentos y Frontend",
       duration: "6 semanas",
+      image: module1Image,
       topics: [
         "HTML5 semántico y accesibilidad",
         "CSS3 avanzado y Flexbox/Grid", 
@@ -26,6 +33,7 @@ export const Curriculum = ({ onCTAClick }: CurriculumProps) => {
       id: "module2", 
       title: "Módulo 2: React Avanzado y Herramientas",
       duration: "4 semanas",
+      image: module2Image,
       topics: [
         "React Router y navegación",
         "Context API y Redux Toolkit",
@@ -38,7 +46,8 @@ export const Curriculum = ({ onCTAClick }: CurriculumProps) => {
     {
       id: "module3",
       title: "Módulo 3: Backend con Node.js",
-      duration: "5 semanas", 
+      duration: "5 semanas",
+      image: module3Image,
       topics: [
         "Node.js fundamentals y NPM",
         "Express.js y middleware",
@@ -53,6 +62,7 @@ export const Curriculum = ({ onCTAClick }: CurriculumProps) => {
       id: "module4",
       title: "Módulo 4: Bases de Datos",
       duration: "4 semanas",
+      image: module4Image,
       topics: [
         "MongoDB y Mongoose ODM",
         "PostgreSQL y queries avanzadas",
@@ -66,6 +76,7 @@ export const Curriculum = ({ onCTAClick }: CurriculumProps) => {
       id: "module5",
       title: "Módulo 5: Full Stack Integration", 
       duration: "4 semanas",
+      image: module5Image,
       topics: [
         "Conexión Frontend-Backend",
         "Manejo de estados globales",
@@ -79,6 +90,7 @@ export const Curriculum = ({ onCTAClick }: CurriculumProps) => {
       id: "module6",
       title: "Módulo 6: Deploy y DevOps",
       duration: "3 semanas",
+      image: module6Image,
       topics: [
         "Git avanzado y GitHub workflows",
         "Docker y containerización",
@@ -136,6 +148,13 @@ export const Curriculum = ({ onCTAClick }: CurriculumProps) => {
                 </div>
               </AccordionTrigger>
               <AccordionContent className="bg-card/30 px-6 py-6 border-x border-b border-border rounded-b-lg">
+                <div className="mb-6">
+                  <img 
+                    src={module.image} 
+                    alt={module.title}
+                    className="w-full h-48 object-cover rounded-lg border border-border"
+                  />
+                </div>
                 <ul className="grid md:grid-cols-2 gap-3">
                   {module.topics.map((topic, topicIndex) => (
                     <li key={topicIndex} className="flex items-start gap-3">
