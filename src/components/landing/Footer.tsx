@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Mail, Phone, MessageCircle, Github, Linkedin, Twitter } from "lucide-react";
+import successStoryImg from "@/assets/success-story.jpg";
 
 interface FooterProps {
   onCTAClick: () => void;
@@ -11,6 +12,13 @@ export const Footer = ({ onCTAClick }: FooterProps) => {
       {/* Final CTA Section */}
       <section className="py-20 bg-gradient-hero">
         <div className="container px-4 text-center">
+          <div className="mb-8">
+            <img 
+              src={successStoryImg} 
+              alt="Historia de Éxito"
+              className="w-full max-w-4xl mx-auto h-80 object-cover rounded-lg border border-border"
+            />
+          </div>
           <h2 className="text-3xl md:text-5xl font-bold mb-6">
             Tu futuro como <span className="text-tech-green">Developer</span>
             <br />

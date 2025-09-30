@@ -10,6 +10,10 @@ import {
   CheckCircle,
   Zap
 } from "lucide-react";
+import mentoringImg from "@/assets/mentoring.jpg";
+import projectsImg from "@/assets/projects.jpg";
+import communityImg from "@/assets/community.jpg";
+import guaranteeImg from "@/assets/guarantee.jpg";
 
 interface BenefitsProps {
   onCTAClick: () => void;
@@ -21,6 +25,7 @@ export const Benefits = ({ onCTAClick }: BenefitsProps) => {
       icon: Code,
       title: "Aprendizaje 100% Basado en Proyectos Reales",
       description: "Olvídate de tutoriales básicos y ejercicios sin sentido. Desde el primer día construyes aplicaciones que realmente importan, con la complejidad y calidad que exigen las empresas tech más exigentes.",
+      image: projectsImg,
       features: [
         "6 proyectos full-stack completos de nivel empresarial",
         "Código revisado línea por línea por mentores senior",
@@ -36,6 +41,7 @@ export const Benefits = ({ onCTAClick }: BenefitsProps) => {
       icon: Users,
       title: "Mentoría 1:1 con Desarrolladores Senior Activos",
       description: "No instructores que leyeron un libro. Developers que trabajan en Mercado Libre, Globant, startups unicornio y empresas internacionales. Te guían paso a paso con experiencia real del mercado laboral.",
+      image: mentoringImg,
       features: [
         "2 sesiones semanales de mentoría personalizada (52 total)",
         "Mentores con salarios de $80K-150K USD trabajando activamente", 
@@ -51,6 +57,7 @@ export const Benefits = ({ onCTAClick }: BenefitsProps) => {
       icon: Briefcase,
       title: "Proyectos de Nivel Empresarial (No Juguetes)",
       description: "Construyes aplicaciones que resuelven problemas reales, con la arquitectura, seguridad y escalabilidad que demandan empresas serias. Experiencia equivalente a 12-18 meses de trabajo junior.",
+      image: projectsImg,
       features: [
         "E-commerce con +10,000 productos y pasarela de pagos real",
         "Red social con 1M+ usuarios simulados y chat en tiempo real",
@@ -66,6 +73,7 @@ export const Benefits = ({ onCTAClick }: BenefitsProps) => {
       icon: MessageCircle,
       title: "Comunidad Activa de +500 Developers Empleados",
       description: "No estás solo. Únete a la red profesional tech más activa de LATAM. Oportunidades laborales exclusivas, colaboraciones, mentorías peer-to-peer y networking que dura toda la vida.",
+      image: communityImg,
       features: [
         "Discord con +500 miembros activos disponibles 24/7",
         "Eventos mensuales con líderes tech de grandes empresas",
@@ -114,6 +122,13 @@ export const Benefits = ({ onCTAClick }: BenefitsProps) => {
         <div className="grid lg:grid-cols-2 gap-8 mb-16">
           {benefits.map((benefit, index) => (
             <Card key={index} className="p-8 bg-card/80 hover:bg-card transition-all hover:shadow-card border-l-4 border-l-tech-blue/40 hover:border-l-tech-green/60">
+              <div className="mb-6">
+                <img 
+                  src={benefit.image} 
+                  alt={benefit.title}
+                  className="w-full h-56 object-cover rounded-lg border border-border"
+                />
+              </div>
               <div className="flex items-start gap-6">
                 <div className={`p-4 rounded-lg ${
                   benefit.color === 'tech-blue' ? 'bg-tech-blue/10 border border-tech-blue/20' :
@@ -154,6 +169,13 @@ export const Benefits = ({ onCTAClick }: BenefitsProps) => {
 
         {/* Enhanced Guarantee Section */}
         <div className="bg-gradient-accent/5 border border-accent/20 rounded-2xl p-8 mb-12">
+          <div className="mb-8">
+            <img 
+              src={guaranteeImg} 
+              alt="Garantía de Empleabilidad"
+              className="w-full h-64 object-cover rounded-lg border border-border"
+            />
+          </div>
           <div className="text-center">
             <Zap className="w-16 h-16 text-accent mx-auto mb-6" />
             <h3 className="text-3xl font-bold mb-4">Garantía Blindada de Empleabilidad</h3>

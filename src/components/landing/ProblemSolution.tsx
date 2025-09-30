@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { AlertTriangle, Target, TrendingUp, Users, CheckCircle } from "lucide-react";
+import problemSalaryImg from "@/assets/problem-salary.jpg";
+import solutionCareerImg from "@/assets/solution-career.jpg";
 
 interface ProblemSolutionProps {
   onCTAClick: () => void;
@@ -106,6 +108,14 @@ export const ProblemSolution = ({ onCTAClick }: ProblemSolutionProps) => {
           </div>
         </div>
 
+        <div className="mb-12">
+          <img 
+            src={problemSalaryImg} 
+            alt="Problemas Comunes de Carrera"
+            className="w-full max-w-5xl mx-auto h-80 object-cover rounded-lg border border-border"
+          />
+        </div>
+
         <div className="grid md:grid-cols-3 gap-8 mb-20">
           {problems.map((problem, index) => (
             <Card key={index} className="p-8 bg-card/50 border border-destructive/20 hover:border-destructive/40 transition-all group">
@@ -129,9 +139,16 @@ export const ProblemSolution = ({ onCTAClick }: ProblemSolutionProps) => {
           <h2 className="text-3xl md:text-5xl font-bold mb-6">
             <span className="text-tech-green">La solución está aquí</span>
           </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
             Un programa completo que te lleva desde cero hasta desarrollador full stack empleable en solo 6 meses.
           </p>
+          <div className="mb-8">
+            <img 
+              src={solutionCareerImg} 
+              alt="Solución Profesional"
+              className="w-full max-w-5xl mx-auto h-80 object-cover rounded-lg border border-border"
+            />
+          </div>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8 mb-16">

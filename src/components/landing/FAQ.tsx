@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import faqHeroImg from "@/assets/faq-hero.jpg";
 
 interface FAQProps {
   onCTAClick: () => void;
@@ -63,6 +64,13 @@ export const FAQ = ({ onCTAClick }: FAQProps) => {
     <section className="py-20 bg-background">
       <div className="container px-4">
         <div className="text-center mb-16">
+          <div className="mb-8">
+            <img 
+              src={faqHeroImg} 
+              alt="Preguntas Frecuentes"
+              className="w-full max-w-4xl mx-auto h-64 object-cover rounded-lg border border-border"
+            />
+          </div>
           <h2 className="text-3xl md:text-5xl font-bold mb-6">
             Preguntas Frecuentes
           </h2>

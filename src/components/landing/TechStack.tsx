@@ -1,4 +1,7 @@
 import { Card } from "@/components/ui/card";
+import frontendStackImg from "@/assets/frontend-stack.jpg";
+import backendStackImg from "@/assets/backend-stack.jpg";
+import devopsToolsImg from "@/assets/devops-tools.jpg";
 
 export const TechStack = () => {
   const frontendTech = [
@@ -128,6 +131,13 @@ export const TechStack = () => {
 
         {/* Frontend */}
         <div className="mb-16">
+          <div className="mb-8">
+            <img 
+              src={frontendStackImg} 
+              alt="Frontend Development Stack"
+              className="w-full max-w-5xl mx-auto h-64 object-cover rounded-lg border border-border"
+            />
+          </div>
           <h3 className="text-2xl font-bold text-center mb-8 text-tech-blue">Frontend Development</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {frontendTech.map((tech, index) => (
@@ -148,6 +158,13 @@ export const TechStack = () => {
 
         {/* Backend */}
         <div className="mb-16">
+          <div className="mb-8">
+            <img 
+              src={backendStackImg} 
+              alt="Backend Development Stack"
+              className="w-full max-w-5xl mx-auto h-64 object-cover rounded-lg border border-border"
+            />
+          </div>
           <h3 className="text-2xl font-bold text-center mb-8 text-tech-green">Backend Development</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {backendTech.map((tech, index) => (
@@ -168,6 +185,13 @@ export const TechStack = () => {
 
         {/* Tools & Deployment */}
         <div>
+          <div className="mb-8">
+            <img 
+              src={devopsToolsImg} 
+              alt="DevOps Tools and Deployment"
+              className="w-full max-w-5xl mx-auto h-64 object-cover rounded-lg border border-border"
+            />
+          </div>
           <h3 className="text-2xl font-bold text-center mb-8 text-tech-purple">Herramientas & Deploy</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {tools.map((tech, index) => (
