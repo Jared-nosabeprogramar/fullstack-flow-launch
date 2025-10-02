@@ -1,34 +1,70 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ArrowLeft, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { AdminStats } from "@/components/admin/AdminStats";
 import { AdminProfile } from "@/components/admin/AdminProfile";
 import { SuccessRate } from "@/components/admin/SuccessRate";
 import { StudentsTable } from "@/components/admin/StudentsTable";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const Admin = () => {
   const navigate = useNavigate();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { toast } = useToast();
+  const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const auth = localStorage.getItem("isAuthenticated");
-    if (!auth) {
-      navigate("/");
-    } else {
-      setIsAuthenticated(true);
-    }
-  }, [navigate]);
+    checkAuth();
+  }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem("isAuthenticated");
-    localStorage.removeItem("userEmail");
+  const checkAuth = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        navigate("/");
+        return;
+      }
+
+      // Verificar rol de admin
+      const { data: roleData, error } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .eq('role', 'admin')
+        .maybeSingle();
+
+      if (error || !roleData) {
+        toast({
+          title: "Acceso denegado",
+          description: "No tienes permisos de administrador",
+          variant: "destructive",
+        });
+        navigate("/");
+        return;
+      }
+
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Auth check error:', error);
+      navigate("/");
+    }
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
     navigate("/");
   };
 
-  if (!isAuthenticated) {
-    return null;
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <p className="text-lg text-muted-foreground">Verificando autenticación...</p>
+      </div>
+    );
   }
 
   return (
@@ -49,6 +85,7 @@ const Admin = () => {
             </h1>
           </div>
           <Button variant="outline" onClick={handleLogout}>
+            <LogOut className="h-4 w-4 mr-2" />
             Cerrar Sesión
           </Button>
         </div>
@@ -59,14 +96,17 @@ const Admin = () => {
         <div className="h-full grid grid-cols-1 lg:grid-cols-[80px_1fr_300px] xl:grid-cols-[80px_1fr_350px]">
           {/* Left Sidebar - Hidden on mobile, fixed on desktop */}
           <div className="hidden lg:block">
-            <AdminSidebar />
+            <AdminSidebar selectedStudentId={selectedStudentId} />
           </div>
 
           {/* Center Content - Scrollable */}
           <div className="overflow-y-auto p-4 lg:p-6">
             <AdminProfile />
             <SuccessRate />
-            <StudentsTable />
+            <StudentsTable 
+              selectedStudentId={selectedStudentId}
+              onSelectStudent={setSelectedStudentId}
+            />
           </div>
 
           {/* Right Stats - Hidden on mobile, scrollable on desktop */}

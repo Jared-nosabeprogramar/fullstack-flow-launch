@@ -1,1 +1,4 @@
 project_id = "bpoyfhwxuigeynotgvka"
+
+[functions.generate-student-tips]
+verify_jwt = false

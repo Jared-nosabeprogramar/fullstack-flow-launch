@@ -1,8 +1,15 @@
-import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,226 +21,311 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Search, Download, Filter, Edit, Trash2, UserCircle } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
+import { Search, FileDown, Filter, Edit, Trash2, Sparkles, Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { PersonalityFormModal } from "./PersonalityFormModal";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-interface Student {
-  id: string;
-  apellido: string;
-  nombre: string;
-  precio: number;
-  ciclo: string;
-  avatar: string;
-  selected: boolean;
+interface StudentsTableProps {
+  selectedStudentId: string | null;
+  onSelectStudent: (id: string | null) => void;
 }
 
-const initialStudents: Student[] = [
-  { id: "1", apellido: "García", nombre: "María", precio: 1200, ciclo: "I", avatar: "https://i.pravatar.cc/150?img=1", selected: false },
-  { id: "2", apellido: "Rodríguez", nombre: "Juan", precio: 1200, ciclo: "II", avatar: "https://i.pravatar.cc/150?img=2", selected: false },
-  { id: "3", apellido: "Martínez", nombre: "Ana", precio: 1500, ciclo: "III", avatar: "https://i.pravatar.cc/150?img=3", selected: false },
-  { id: "4", apellido: "López", nombre: "Carlos", precio: 1200, ciclo: "I", avatar: "https://i.pravatar.cc/150?img=4", selected: false },
-  { id: "5", apellido: "Fernández", nombre: "Laura", precio: 1800, ciclo: "IV", avatar: "https://i.pravatar.cc/150?img=5", selected: false },
-  { id: "6", apellido: "González", nombre: "Pedro", precio: 1500, ciclo: "II", avatar: "https://i.pravatar.cc/150?img=6", selected: false },
-  { id: "7", apellido: "Sánchez", nombre: "Isabel", precio: 1200, ciclo: "I", avatar: "https://i.pravatar.cc/150?img=7", selected: false },
-  { id: "8", apellido: "Ramírez", nombre: "Diego", precio: 1800, ciclo: "III", avatar: "https://i.pravatar.cc/150?img=8", selected: false },
-];
-
-export const StudentsTable = () => {
-  const [students, setStudents] = useState<Student[]>(initialStudents);
+export const StudentsTable = ({ selectedStudentId, onSelectStudent }: StudentsTableProps) => {
+  const [students, setStudents] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterOption, setFilterOption] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedForAction, setSelectedForAction] = useState<string[]>([]);
+  const [showPersonalityModal, setShowPersonalityModal] = useState(false);
+  const [currentStudent, setCurrentStudent] = useState<any>(null);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    loadStudents();
+  }, []);
+
+  const loadStudents = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('students')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setStudents(data || []);
+    } catch (error: any) {
+      console.error('Error loading students:', error);
+      toast({
+        title: "Error",
+        description: "Error al cargar los alumnos",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const filteredStudents = students.filter(
     (student) =>
+      student.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
       student.apellido.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      student.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+      student.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const toggleSelectAll = () => {
-    const allSelected = students.every((s) => s.selected);
-    setStudents(students.map((s) => ({ ...s, selected: !allSelected })));
+    if (selectedForAction.length === filteredStudents.length) {
+      setSelectedForAction([]);
+    } else {
+      setSelectedForAction(filteredStudents.map((s) => s.id));
+    }
   };
 
   const toggleSelect = (id: string) => {
-    setStudents(
-      students.map((s) => (s.id === id ? { ...s, selected: !s.selected } : s))
+    setSelectedForAction((prev) =>
+      prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id]
     );
   };
 
   const handleExport = (format: string) => {
     toast({
-      title: "Exportando datos",
-      description: `Generando archivo ${format.toUpperCase()}...`,
+      title: "Exportando",
+      description: `Exportando datos en formato ${format}...`,
     });
   };
 
-  const handleFilter = (option: string) => {
-    setFilterOption(option);
-    toast({
-      title: "Filtro aplicado",
-      description: `Filtrando por: ${option}`,
-    });
+  const handleDelete = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('students')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Alumno eliminado",
+        description: "El alumno ha sido eliminado correctamente",
+      });
+
+      loadStudents();
+      
+      if (selectedStudentId === id) {
+        onSelectStudent(null);
+      }
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Error al eliminar alumno",
+        variant: "destructive",
+      });
+    }
   };
 
-  const handleDelete = (id: string) => {
-    setStudents(students.filter((s) => s.id !== id));
-    toast({
-      title: "Alumno eliminado",
-      description: "El registro ha sido eliminado correctamente.",
-      variant: "destructive",
-    });
+  const handleRowClick = (student: any) => {
+    if (selectedStudentId === student.id) {
+      onSelectStudent(null);
+    } else {
+      onSelectStudent(student.id);
+    }
   };
+
+  const openPersonalityModal = (student: any, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentStudent(student);
+    setShowPersonalityModal(true);
+  };
+
+  if (isLoading) {
+    return (
+      <Card className="mt-6">
+        <CardContent className="flex items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-2xl">Alumnos Registrados</CardTitle>
-      </CardHeader>
-      <CardContent>
-        {/* Toolbar */}
-        <div className="flex flex-wrap gap-3 mb-6">
-          <div className="flex-1 min-w-[200px]">
-            <Input
-              placeholder="Buscar alumnos..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full"
-            />
-          </div>
-          <Button className="gap-2">
-            <Search className="h-4 w-4" />
-            BUSCAR
-          </Button>
-          
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="gap-2">
-                <Download className="h-4 w-4" />
-                EXPORTAR
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem onClick={() => handleExport("pdf")}>
-                Exportar PDF
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleExport("csv")}>
-                Exportar CSV
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" className="gap-2">
-                <Filter className="h-4 w-4" />
-                FILTRAR
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-56">
-              <div className="space-y-2">
-                <h4 className="font-medium mb-3">Opciones de Filtro</h4>
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start"
-                  onClick={() => handleFilter("Fecha de R")}
-                >
-                  Fecha de Registro
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start"
-                  onClick={() => handleFilter("AB - X2")}
-                >
-                  AB - X2
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start"
-                  onClick={() => handleFilter("Jerarquía")}
-                >
-                  Jerarquía
-                </Button>
+    <>
+      <Card className="mt-6">
+        <CardHeader>
+          <CardTitle>Alumnos Registrados</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {/* Barra de herramientas */}
+          <div className="flex flex-wrap gap-4 mb-6">
+            <div className="flex-1 min-w-[200px] flex gap-2">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="text"
+                  placeholder="Buscar alumnos..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
               </div>
-            </PopoverContent>
-          </Popover>
-        </div>
+              <Button variant="default">
+                <Search className="h-4 w-4 mr-2" />
+                BUSCAR
+              </Button>
+            </div>
 
-        {/* Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-border">
-                <th className="p-3 text-left">
-                  <Checkbox
-                    checked={students.every((s) => s.selected)}
-                    onCheckedChange={toggleSelectAll}
-                  />
-                </th>
-                <th className="p-3 text-left">Avatar</th>
-                <th className="p-3 text-left">Apellido</th>
-                <th className="p-3 text-left">Nombre</th>
-                <th className="p-3 text-left">Precio</th>
-                <th className="p-3 text-left">Ciclo</th>
-                <th className="p-3 text-left">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredStudents.map((student) => (
-                <tr
-                  key={student.id}
-                  className="border-b border-border hover:bg-muted/50 transition-colors"
-                >
-                  <td className="p-3">
-                    <Checkbox
-                      checked={student.selected}
-                      onCheckedChange={() => toggleSelect(student.id)}
-                    />
-                  </td>
-                  <td className="p-3">
-                    <img
-                      src={student.avatar}
-                      alt={`${student.nombre} ${student.apellido}`}
-                      className="h-10 w-10 rounded-full object-cover"
-                    />
-                  </td>
-                  <td className="p-3 font-medium">{student.apellido}</td>
-                  <td className="p-3">{student.nombre}</td>
-                  <td className="p-3 font-semibold text-green-600">
-                    ${student.precio.toLocaleString()}
-                  </td>
-                  <td className="p-3">
-                    <span className="px-2 py-1 bg-primary/10 text-primary rounded-md text-sm font-medium">
-                      {student.ciclo}
-                    </span>
-                  </td>
-                  <td className="p-3">
-                    <div className="flex gap-2">
-                      <Button size="icon" variant="ghost" className="h-8 w-8">
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        className="h-8 w-8 text-destructive hover:text-destructive"
-                        onClick={() => handleDelete(student.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  <FileDown className="h-4 w-4 mr-2" />
+                  EXPORTAR
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem onClick={() => handleExport("PDF")}>
+                  Exportar PDF
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleExport("CSV")}>
+                  Exportar CSV
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
-        {filteredStudents.length === 0 && (
-          <div className="text-center py-12 text-muted-foreground">
-            <UserCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <p>No se encontraron alumnos</p>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline">
+                  <Filter className="h-4 w-4 mr-2" />
+                  Filter ?
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-56">
+                <div className="space-y-2">
+                  <h4 className="font-semibold text-sm">Filtros</h4>
+                  <Button variant="ghost" className="w-full justify-start">
+                    Fecha de R
+                  </Button>
+                  <Button variant="ghost" className="w-full justify-start">
+                    AB - X2
+                  </Button>
+                  <Button variant="ghost" className="w-full justify-start">
+                    Jerarquía
+                  </Button>
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
-        )}
-      </CardContent>
-    </Card>
+
+          {/* Tabla */}
+          <div className="rounded-md border overflow-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-12">
+                    <Checkbox
+                      checked={selectedForAction.length === filteredStudents.length}
+                      onCheckedChange={toggleSelectAll}
+                    />
+                  </TableHead>
+                  <TableHead>Alumno</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Editar</TableHead>
+                  <TableHead className="text-right">Precio</TableHead>
+                  <TableHead>Ciclo</TableHead>
+                  <TableHead>Promedio</TableHead>
+                  <TableHead>Éxito</TableHead>
+                  <TableHead className="text-right">Acciones</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredStudents.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={9} className="text-center py-8 text-muted-foreground">
+                      No se encontraron alumnos
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredStudents.map((student) => (
+                    <TableRow
+                      key={student.id}
+                      onClick={() => handleRowClick(student)}
+                      className={`cursor-pointer transition-colors ${
+                        selectedStudentId === student.id ? 'bg-primary/10' : 'hover:bg-muted/50'
+                      }`}
+                    >
+                      <TableCell onClick={(e) => e.stopPropagation()}>
+                        <Checkbox
+                          checked={selectedForAction.includes(student.id)}
+                          onCheckedChange={() => toggleSelect(student.id)}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <Avatar className="h-10 w-10">
+                            <AvatarImage src={student.avatar} alt={student.nombre} />
+                            <AvatarFallback>
+                              {student.nombre[0]}{student.apellido[0]}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="font-medium">{student.apellido}, {student.nombre}</p>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">{student.email}</TableCell>
+                      <TableCell>
+                        <Checkbox onClick={(e) => e.stopPropagation()} />
+                      </TableCell>
+                      <TableCell className="text-right font-medium">
+                        ${student.precio?.toFixed(2) || '0.00'}
+                      </TableCell>
+                      <TableCell>
+                        <span className="px-2 py-1 bg-primary/10 rounded text-sm">
+                          {student.ciclo || 'N/A'}
+                        </span>
+                      </TableCell>
+                      <TableCell>{student.promedio_general || 0}</TableCell>
+                      <TableCell>{student.tasa_exito || 0}%</TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex gap-2 justify-end" onClick={(e) => e.stopPropagation()}>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={(e) => openPersonalityModal(student, e)}
+                          >
+                            <Sparkles className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDelete(student.id);
+                            }}
+                          >
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+
+      {currentStudent && (
+        <PersonalityFormModal
+          isOpen={showPersonalityModal}
+          onClose={() => {
+            setShowPersonalityModal(false);
+            setCurrentStudent(null);
+          }}
+          studentId={currentStudent.id}
+          studentName={`${currentStudent.nombre} ${currentStudent.apellido}`}
+          currentPromedio={currentStudent.promedio_general || 0}
+        />
+      )}
+    </>
   );
 };

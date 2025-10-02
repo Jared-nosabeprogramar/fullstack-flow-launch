@@ -1,10 +1,11 @@
-import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
+import { Label } from "@/components/ui/label";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -15,33 +16,56 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    
+    try {
+      // Autenticación real con Supabase
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    // Simulación de login - en producción usarías Lovable Cloud
-    setTimeout(() => {
-      if (email && password) {
+      if (authError) throw authError;
+
+      if (authData.user) {
+        // Verificar si el usuario es admin
+        const { data: roleData, error: roleError } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', authData.user.id)
+          .eq('role', 'admin')
+          .maybeSingle();
+
+        if (roleError) throw roleError;
+
+        if (!roleData) {
+          await supabase.auth.signOut();
+          throw new Error('No tienes permisos de administrador');
+        }
+
         toast({
           title: "Inicio de sesión exitoso",
-          description: "Bienvenido al panel de administración",
+          description: "Redirigiendo al panel de administración...",
         });
-        localStorage.setItem("isAuthenticated", "true");
-        localStorage.setItem("userEmail", email);
+        
         onClose();
         navigate("/admin");
-      } else {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Por favor ingresa email y contraseña",
-        });
       }
+    } catch (error: any) {
+      console.error('Login error:', error);
+      toast({
+        title: "Error al iniciar sesión",
+        description: error.message || "Credenciales incorrectas",
+        variant: "destructive",
+      });
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -63,6 +87,7 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              disabled={isLoading}
             />
           </div>
 
@@ -75,25 +100,14 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              disabled={isLoading}
             />
           </div>
 
-          <Button
-            type="submit"
-            variant="cta"
-            className="w-full"
-            disabled={isLoading}
-          >
-            {isLoading ? "Iniciando..." : "Ingresar"}
+          <Button type="submit" className="w-full" disabled={isLoading}>
+            {isLoading ? "Iniciando sesión..." : "Iniciar Sesión"}
           </Button>
         </form>
-
-        <p className="text-sm text-muted-foreground text-center mt-4">
-          ¿Olvidaste tu contraseña?{" "}
-          <button className="text-primary hover:underline">
-            Recuperar acceso
-          </button>
-        </p>
       </DialogContent>
     </Dialog>
   );
