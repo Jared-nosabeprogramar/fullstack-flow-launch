@@ -9,7 +9,7 @@ import module5Image from "@/assets/module5-fullstack.jpg";
 import module6Image from "@/assets/module6-devops.jpg";
 
 interface CurriculumProps {
-  onCTAClick: () => void;
+  onCTAClick?: () => void;
 }
 
 export const Curriculum = ({ onCTAClick }: CurriculumProps) => {

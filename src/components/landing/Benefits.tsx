@@ -16,7 +16,7 @@ import communityImg from "@/assets/community.jpg";
 import guaranteeImg from "@/assets/guarantee.jpg";
 
 interface BenefitsProps {
-  onCTAClick: () => void;
+  onCTAClick?: () => void;
 }
 
 export const Benefits = ({ onCTAClick }: BenefitsProps) => {

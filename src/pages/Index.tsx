@@ -7,27 +7,22 @@ import { Curriculum } from "@/components/landing/Curriculum";
 import { Testimonials } from "@/components/landing/Testimonials";
 import { FAQ } from "@/components/landing/FAQ";
 import { Footer } from "@/components/landing/Footer";
-import { Modal } from "@/components/landing/Modal";
 import { ContactButton } from "@/components/landing/ContactButton";
 import { Navbar } from "@/components/layout/Navbar";
 import { LoginModal } from "@/components/auth/LoginModal";
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    const auth = localStorage.getItem("isAuthenticated");
-    setIsAuthenticated(!!auth);
+    checkAuth();
   }, []);
 
-  const handleCTAClick = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
+  const checkAuth = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    setIsAuthenticated(!!user);
   };
 
   const handleLoginClick = () => {
@@ -36,13 +31,11 @@ const Index = () => {
 
   const handleCloseLoginModal = () => {
     setIsLoginModalOpen(false);
-    const auth = localStorage.getItem("isAuthenticated");
-    setIsAuthenticated(!!auth);
+    checkAuth();
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("isAuthenticated");
-    localStorage.removeItem("userEmail");
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
     setIsAuthenticated(false);
   };
 
@@ -54,17 +47,16 @@ const Index = () => {
         onLogout={handleLogout}
       />
       <div className="pt-16">
-        <Hero onCTAClick={handleCTAClick} />
-        <ProblemSolution onCTAClick={handleCTAClick} />
+        <Hero />
+        <ProblemSolution />
         <TechStack />
-        <Benefits onCTAClick={handleCTAClick} />
-        <Curriculum onCTAClick={handleCTAClick} />
+        <Benefits />
+        <Curriculum />
         <Testimonials />
-        <FAQ onCTAClick={handleCTAClick} />
-        <Footer onCTAClick={handleCTAClick} />
+        <FAQ />
+        <Footer />
       </div>
       
-      <Modal isOpen={isModalOpen} onClose={handleCloseModal} />
       <LoginModal isOpen={isLoginModalOpen} onClose={handleCloseLoginModal} />
       <ContactButton />
     </div>

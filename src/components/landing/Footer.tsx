@@ -3,7 +3,7 @@ import { Mail, Phone, MessageCircle, Github, Linkedin, Twitter } from "lucide-re
 import successStoryImg from "@/assets/success-story.jpg";
 
 interface FooterProps {
-  onCTAClick: () => void;
+  onCTAClick?: () => void;
 }
 
 export const Footer = ({ onCTAClick }: FooterProps) => {

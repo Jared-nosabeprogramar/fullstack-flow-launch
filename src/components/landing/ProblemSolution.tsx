@@ -5,7 +5,7 @@ import problemSalaryImg from "@/assets/problem-salary.jpg";
 import solutionCareerImg from "@/assets/solution-career.jpg";
 
 interface ProblemSolutionProps {
-  onCTAClick: () => void;
+  onCTAClick?: () => void;
 }
 
 export const ProblemSolution = ({ onCTAClick }: ProblemSolutionProps) => {

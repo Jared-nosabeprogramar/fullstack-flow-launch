@@ -3,7 +3,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import faqHeroImg from "@/assets/faq-hero.jpg";
 
 interface FAQProps {
-  onCTAClick: () => void;
+  onCTAClick?: () => void;
 }
 
 export const FAQ = ({ onCTAClick }: FAQProps) => {

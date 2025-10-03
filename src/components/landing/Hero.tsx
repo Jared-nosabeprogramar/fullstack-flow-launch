@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Code2, Rocket, Zap } from "lucide-react";
 
 interface HeroProps {
-  onCTAClick: () => void;
+  onCTAClick?: () => void;
 }
 
 export const Hero = ({ onCTAClick }: HeroProps) => {
