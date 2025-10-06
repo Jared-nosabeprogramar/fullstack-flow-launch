@@ -1,4 +1,4 @@
-import { MessageCircle } from "lucide-react";
+import { Ghost, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
@@ -13,10 +13,13 @@ export const ContactButton = () => {
     <Button
       onClick={handleContact}
       size="lg"
-      className="fixed bottom-8 right-8 rounded-full w-16 h-16 shadow-lg hover:shadow-xl transition-all animate-pulse hover:animate-none bg-tech-green hover:bg-tech-green/90 z-50"
+      className="fixed bottom-8 right-8 rounded-full w-20 h-20 shadow-glow-orange hover:shadow-float transition-all duration-300 bg-gradient-accent hover:scale-110 z-50 group animate-float"
       aria-label="Regístrate ahora"
     >
-      <MessageCircle className="w-8 h-8" />
+      <div className="relative">
+        <Ghost className="w-10 h-10 text-white group-hover:scale-110 transition-transform" />
+        <Sparkles className="w-4 h-4 text-halloween-orange-light absolute -top-1 -right-1 animate-pulse-glow" />
+      </div>
     </Button>
   );
 };

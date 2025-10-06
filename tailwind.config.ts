@@ -47,12 +47,12 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Tech specific colors
-        "tech-blue": "hsl(var(--tech-blue))",
-        "tech-blue-dark": "hsl(var(--tech-blue-dark))",
-        "tech-green": "hsl(var(--tech-green))",
-        "tech-purple": "hsl(var(--tech-purple))",
-        "tech-orange": "hsl(var(--tech-orange))",
+        // Halloween specific colors
+        "halloween-purple": "hsl(var(--halloween-purple))",
+        "halloween-purple-dark": "hsl(var(--halloween-purple-dark))",
+        "halloween-orange": "hsl(var(--halloween-orange))",
+        "halloween-orange-light": "hsl(var(--halloween-orange-light))",
+        "halloween-ghost": "hsl(var(--halloween-ghost))",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
@@ -68,10 +68,13 @@ export default {
         'gradient-hero': 'var(--gradient-hero)',
         'gradient-primary': 'var(--gradient-primary)',
         'gradient-accent': 'var(--gradient-accent)',
+        'gradient-halloween': 'var(--gradient-halloween)',
       },
       boxShadow: {
         'glow': 'var(--shadow-glow)',
+        'glow-orange': 'var(--shadow-glow-orange)',
         'card': 'var(--shadow-card)',
+        'float': 'var(--shadow-float)',
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -107,10 +110,28 @@ export default {
         },
         "glow": {
           "0%, 100%": {
-            boxShadow: "0 0 20px hsl(var(--tech-blue) / 0.3)",
+            boxShadow: "0 0 20px hsl(var(--halloween-purple) / 0.4)",
           },
           "50%": {
-            boxShadow: "0 0 40px hsl(var(--tech-blue) / 0.6)",
+            boxShadow: "0 0 40px hsl(var(--halloween-purple) / 0.7)",
+          },
+        },
+        "float": {
+          "0%, 100%": {
+            transform: "translateY(0px)",
+          },
+          "50%": {
+            transform: "translateY(-20px)",
+          },
+        },
+        "pulse-glow": {
+          "0%, 100%": {
+            opacity: "1",
+            transform: "scale(1)",
+          },
+          "50%": {
+            opacity: "0.8",
+            transform: "scale(1.05)",
           },
         },
       },
@@ -119,6 +140,8 @@ export default {
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-up": "fade-up 0.6s ease-out",
         "glow": "glow 2s ease-in-out infinite",
+        "float": "float 3s ease-in-out infinite",
+        "pulse-glow": "pulse-glow 2s ease-in-out infinite",
       },
     },
   },

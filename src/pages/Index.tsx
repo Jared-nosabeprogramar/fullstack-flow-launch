@@ -11,10 +11,13 @@ import { ContactButton } from "@/components/landing/ContactButton";
 import { Navbar } from "@/components/layout/Navbar";
 import { LoginModal } from "@/components/auth/LoginModal";
 import { supabase } from "@/integrations/supabase/client";
+import { useAutoDarkMode } from "@/hooks/useAutoDarkMode";
 
 const Index = () => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  
+  useAutoDarkMode();
 
   useEffect(() => {
     checkAuth();
@@ -46,7 +49,7 @@ const Index = () => {
         isAuthenticated={isAuthenticated}
         onLogout={handleLogout}
       />
-      <div className="pt-16">
+      <div className="pt-20">
         <Hero />
         <ProblemSolution />
         <TechStack />
