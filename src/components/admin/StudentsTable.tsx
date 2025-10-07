@@ -26,6 +26,7 @@ import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { PersonalityFormModal } from "./PersonalityFormModal";
+import { EditStudentModal } from "./EditStudentModal";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface StudentsTableProps {
@@ -39,6 +40,7 @@ export const StudentsTable = ({ selectedStudentId, onSelectStudent }: StudentsTa
   const [isLoading, setIsLoading] = useState(true);
   const [selectedForAction, setSelectedForAction] = useState<string[]>([]);
   const [showPersonalityModal, setShowPersonalityModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [currentStudent, setCurrentStudent] = useState<any>(null);
   const { toast } = useToast();
 
@@ -135,6 +137,12 @@ export const StudentsTable = ({ selectedStudentId, onSelectStudent }: StudentsTa
     e.stopPropagation();
     setCurrentStudent(student);
     setShowPersonalityModal(true);
+  };
+
+  const openEditModal = (student: any, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentStudent(student);
+    setShowEditModal(true);
   };
 
   if (isLoading) {
@@ -289,9 +297,18 @@ export const StudentsTable = ({ selectedStudentId, onSelectStudent }: StudentsTa
                           <Button
                             size="sm"
                             variant="outline"
-                            onClick={(e) => openPersonalityModal(student, e)}
+                            onClick={(e) => openEditModal(student, e)}
+                            className="border-halloween-purple/30 hover:bg-halloween-purple/10 hover:shadow-glow"
                           >
-                            <Sparkles className="h-4 w-4" />
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={(e) => openPersonalityModal(student, e)}
+                            className="border-halloween-orange/30 hover:bg-halloween-orange/10 hover:shadow-glow-orange"
+                          >
+                            <Sparkles className="h-4 w-4 text-halloween-orange" />
                           </Button>
                           <Button
                             size="sm"
@@ -300,6 +317,7 @@ export const StudentsTable = ({ selectedStudentId, onSelectStudent }: StudentsTa
                               e.stopPropagation();
                               handleDelete(student.id);
                             }}
+                            className="hover:bg-destructive/10"
                           >
                             <Trash2 className="h-4 w-4 text-destructive" />
                           </Button>
@@ -315,16 +333,28 @@ export const StudentsTable = ({ selectedStudentId, onSelectStudent }: StudentsTa
       </Card>
 
       {currentStudent && (
-        <PersonalityFormModal
-          isOpen={showPersonalityModal}
-          onClose={() => {
-            setShowPersonalityModal(false);
-            setCurrentStudent(null);
-          }}
-          studentId={currentStudent.id}
-          studentName={`${currentStudent.nombre} ${currentStudent.apellido}`}
-          currentPromedio={currentStudent.promedio_general || 0}
-        />
+        <>
+          <PersonalityFormModal
+            isOpen={showPersonalityModal}
+            onClose={() => {
+              setShowPersonalityModal(false);
+              setCurrentStudent(null);
+            }}
+            studentId={currentStudent.id}
+            studentName={`${currentStudent.nombre} ${currentStudent.apellido}`}
+            currentPromedio={currentStudent.promedio_general || 0}
+          />
+          
+          <EditStudentModal
+            isOpen={showEditModal}
+            onClose={() => {
+              setShowEditModal(false);
+              setCurrentStudent(null);
+            }}
+            studentId={currentStudent.id}
+            onUpdate={loadStudents}
+          />
+        </>
       )}
     </>
   );

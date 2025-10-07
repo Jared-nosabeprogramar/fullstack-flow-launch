@@ -70,22 +70,27 @@ const Admin = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
-      <header className="border-b border-border bg-card z-10">
+      <header className="border-b border-halloween-purple/20 bg-card shadow-glow-orange z-10">
         <div className="container mx-auto px-4 lg:px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => navigate("/")}
+              className="hover:bg-halloween-purple/10 hover:shadow-glow"
             >
-              <ArrowLeft className="h-5 w-5" />
+              <ArrowLeft className="h-5 w-5 text-halloween-purple" />
             </Button>
-            <h1 className="text-xl lg:text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+            <h1 className="text-xl lg:text-2xl font-bold bg-gradient-halloween bg-clip-text text-transparent">
               Panel de Administración - Naje
             </h1>
           </div>
-          <Button variant="outline" onClick={handleLogout}>
-            <LogOut className="h-4 w-4 mr-2" />
+          <Button 
+            variant="outline" 
+            onClick={handleLogout}
+            className="border-halloween-orange/30 hover:bg-halloween-orange/10 hover:shadow-glow-orange"
+          >
+            <LogOut className="h-4 w-4 mr-2 text-halloween-orange" />
             Cerrar Sesión
           </Button>
         </div>
