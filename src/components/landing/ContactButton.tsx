@@ -2,14 +2,12 @@ import { Ghost, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
-interface ContactButtonProps {
-  onClick?: () => void;
-}
+export const ContactButton = () => {
+  const navigate = useNavigate();
 
-export const ContactButton = ({ onClick }: ContactButtonProps) => {
   return (
     <Button
-      onClick={onClick}
+      onClick={() => navigate("/registro")}
       size="lg"
       className="fixed bottom-8 right-8 shadow-glow-orange hover:shadow-float transition-all duration-300 bg-gradient-halloween hover:scale-110 z-50 group animate-float px-6 py-6"
       aria-label="Regístrate y pruébate"

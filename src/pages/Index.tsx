@@ -64,7 +64,7 @@ const Index = () => {
       
       <LoginModal isOpen={isLoginModalOpen} onClose={handleCloseLoginModal} />
       <RegistrationModal isOpen={isRegistrationModalOpen} onClose={() => setIsRegistrationModalOpen(false)} />
-      <ContactButton onClick={() => setIsRegistrationModalOpen(true)} />
+      <ContactButton />
     </div>
   );
 };
