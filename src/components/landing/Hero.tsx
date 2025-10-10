@@ -83,16 +83,18 @@ export const Hero = ({ onCTAClick }: HeroProps) => {
             onClick={onCTAClick}
             className="text-lg px-12 py-6 shadow-glow hover:shadow-glow-orange hover:scale-110 transition-all duration-300 group"
           >
-            <Rocket className="w-6 h-6 mr-3 group-hover:rotate-12 transition-transform" />
-            Comenzar Ahora
+            <Ghost className="w-6 h-6 mr-3 group-hover:animate-float" />
+            Inscribirme Ahora
+            <Sparkles className="w-5 h-5 ml-3 animate-pulse-glow" />
           </Button>
           <Button 
             size="lg" 
             variant="outline" 
+            onClick={onCTAClick}
             className="text-lg px-8 py-6 border-2 border-halloween-purple hover:bg-halloween-purple/10 hover:scale-105 transition-all duration-300"
           >
-            <Code2 className="w-6 h-6 mr-3" />
-            Ver Temario
+            <Rocket className="w-6 h-6 mr-3" />
+            Comenzar mi Transformación Ahora
           </Button>
         </div>
         

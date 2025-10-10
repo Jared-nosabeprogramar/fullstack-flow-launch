@@ -235,7 +235,6 @@ export const StudentsTable = ({ selectedStudentId, onSelectStudent }: StudentsTa
                   </TableHead>
                   <TableHead>Alumno</TableHead>
                   <TableHead>Email</TableHead>
-                  <TableHead>Editar</TableHead>
                   <TableHead className="text-right">Precio</TableHead>
                   <TableHead>Ciclo</TableHead>
                   <TableHead>Promedio</TableHead>
@@ -279,9 +278,6 @@ export const StudentsTable = ({ selectedStudentId, onSelectStudent }: StudentsTa
                         </div>
                       </TableCell>
                       <TableCell className="text-muted-foreground">{student.email}</TableCell>
-                      <TableCell>
-                        <Checkbox onClick={(e) => e.stopPropagation()} />
-                      </TableCell>
                       <TableCell className="text-right font-medium">
                         ${student.precio?.toFixed(2) || '0.00'}
                       </TableCell>
